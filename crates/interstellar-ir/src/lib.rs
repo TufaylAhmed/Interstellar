@@ -1,5 +1,7 @@
 //! Vendor-neutral intermediate representation for firewall policy conversion.
 
+pub mod project;
+
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -10,6 +12,7 @@ pub enum Vendor {
     Cisco,
     Checkpoint,
     Panos,
+    Juniper,
     Unknown,
 }
 
@@ -20,6 +23,7 @@ impl Vendor {
             Self::Cisco => "cisco",
             Self::Checkpoint => "checkpoint",
             Self::Panos => "panos",
+            Self::Juniper => "juniper",
             Self::Unknown => "unknown",
         }
     }

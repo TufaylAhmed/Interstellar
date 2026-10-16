@@ -10,75 +10,77 @@ Standalone Rust project — **not** part of PA-Converter / Expedition. No PHP.
 | Windows | `interstellar.exe` |
 | Linux | `interstellar` |
 
-## Features
+## Features (v0.2)
 
-1. **Convert** — Fortinet · Cisco ASA · Check Point · PAN-OS → XML / set / IR JSON  
-2. **NAT · VPN · profiles** — source/dest NAT, IKE/IPsec stubs, profile groups  
-3. **Local UI + API** — `interstellar serve` on `http://127.0.0.1:8787`  
-4. **Analyze** — unused objects, shadow hints, broad allows, duplicate rules  
-5. **Validate** — missing refs, duplicates, empty docs  
+| Area | Commands / API |
+|------|----------------|
+| Convert | Fortinet · Cisco ASA · Check Point · Juniper SRX · PAN-OS → XML / set / IR |
+| Transforms | `--zone-map`, `--dedup` |
+| Batch | `interstellar batch <dir> -o <outdir>` |
+| Diff | `interstellar diff a.conf b.conf` |
+| Analyze | JSON / Markdown / HTML reports |
+| Projects | Save/load under `~/.interstellar/projects` |
+| UI + API | `interstellar serve` on `127.0.0.1:8787` |
 
 ## Build
 
 ```bash
-# Rust via rustup: https://rustup.rs
 cargo build --release
 ./target/release/interstellar --help
 ```
 
-Windows (PowerShell):
-
-```powershell
-cargo build --release
-.\target\release\interstellar.exe --help
-```
-
-## CLI
+## CLI examples
 
 ```bash
-interstellar convert fixtures/fortinet/sample.conf -o out.xml
-interstellar convert fixtures/cisco/sample.cfg --format both --ir -o cisco
-interstellar validate fixtures/checkpoint/sample.json
-interstellar analyze fixtures/fortinet/sample.conf
-interstellar summary fixtures/panos/sample.xml
-interstellar serve --bind 127.0.0.1:8787
+# convert + zone map + dedup + save project
+interstellar convert fixtures/fortinet/sample.conf \
+  --zone-map wan1=untrust,internal=trust --dedup \
+  --save-as lab-fg -o /tmp/fg.xml
+
+# juniper
+interstellar convert fixtures/junos/sample.set --vendor juniper -o /tmp/srx.xml
+
+# batch a folder
+interstellar batch fixtures -o /tmp/batch-out --format both
+
+# analyze as markdown
+interstellar analyze fixtures/cisco/sample.cfg --format markdown -o report.md
+
+# diff two configs
+interstellar diff fixtures/fortinet/sample.conf fixtures/cisco/sample.cfg
+
+# projects
+interstellar project list
+interstellar project save fixtures/panos/sample.xml --name pan-lab
+interstellar project export <id> -o /tmp/exported.xml
+
+# UI
+interstellar serve
 ```
 
 ## API
 
-| Method | Path | Purpose |
-|--------|------|---------|
-| GET | `/api/health` | liveness |
-| POST | `/api/convert` | JSON body `{ vendor?, content, name? }` |
-| POST | `/api/upload` | multipart `file` + optional `vendor` |
-| GET | `/api/projects` | in-memory project list |
-| GET | `/api/projects/{id}/xml` | exported XML |
-| GET | `/api/projects/{id}/set` | set commands |
+| Method | Path |
+|--------|------|
+| GET | `/api/health` |
+| POST | `/api/convert` · `/api/upload` · `/api/diff` |
+| GET | `/api/projects` · `/api/projects/{id}` · `/xml` · `/set` · `/report` |
+| GET/POST/DELETE | `/api/disk/projects` |
+
+Env: `INTERSTELLAR_HOME` overrides `~/.interstellar`.
 
 ## Layout
 
 ```
 Interstellar/
-├── crates/
-│   ├── interstellar-ir
-│   ├── interstellar-parse
-│   ├── interstellar-emit
-│   ├── interstellar-analyze
-│   ├── interstellar-api
-│   └── interstellar-cli      → binary `interstellar`
-├── fixtures/
+├── crates/interstellar-{ir,parse,emit,analyze,api,cli}
+├── fixtures/{fortinet,cisco,checkpoint,junos,panos}
 └── web/static/
 ```
 
 ## Relation to PA-Converter
 
-| | PA-Converter | Interstellar |
-|--|--------------|--------------|
-| Purpose | Package/run Expedition | Native config conversion |
-| Stack | PHP / Podman / WSL | Pure Rust |
-| This repo | Separate | **This project** |
-
-Do **not** merge Interstellar into the PA-Converter repository.
+Interstellar is a **separate** native converter. Do not merge into PA-Converter.
 
 ## License
 

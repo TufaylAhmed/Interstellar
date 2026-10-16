@@ -1,4 +1,10 @@
-//! Policy analysis: unused objects, shadowing hints, broad allows.
+//! Policy analysis: unused objects, shadowing hints, broad allows, diff, reports.
+
+mod diff;
+mod report;
+
+pub use diff::{diff_documents, DiffReport, DiffSummary, RuleChange};
+pub use report::{report_html, report_markdown};
 
 use interstellar_ir::{PolicyDocument, RuleAction};
 use serde::{Deserialize, Serialize};

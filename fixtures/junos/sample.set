@@ -1,0 +1,12 @@
+set system host-name srx-lab
+set security address-book global address WEB 10.1.1.10/32
+set security address-book global address USERS 10.0.0.0/24
+set security address-book global address-set INTERNAL address WEB
+set security address-book global address-set INTERNAL address USERS
+set applications application HTTP-ALT protocol tcp destination-port 8080
+set security policies from-zone TRUST to-zone UNTRUST policy ALLOW-WEB match source-address USERS
+set security policies from-zone TRUST to-zone UNTRUST policy ALLOW-WEB match destination-address WEB
+set security policies from-zone TRUST to-zone UNTRUST policy ALLOW-WEB match application HTTP-ALT
+set security policies from-zone TRUST to-zone UNTRUST policy ALLOW-WEB then permit
+set security nat source rule-set EGRESS rule SNAT1 match source-address-name USERS
+set security nat source rule-set EGRESS rule SNAT1 then source-nat interface

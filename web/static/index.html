@@ -112,7 +112,7 @@
   <main>
     <h1 class="brand">Inter<span>stellar</span></h1>
     <p class="lede">
-      Convert Fortinet, Cisco, Check Point, and PAN-OS configs into PAN-OS XML and set commands.
+      Convert Fortinet, Cisco, Check Point, Juniper SRX, and PAN-OS configs into PAN-OS XML and set commands.
       Local-only. No PHP. Separate from PA-Converter / Expedition.
     </p>
 
@@ -125,6 +125,7 @@
             <option value="fortinet">Fortinet</option>
             <option value="cisco">Cisco</option>
             <option value="checkpoint">Check Point</option>
+            <option value="juniper">Juniper SRX</option>
             <option value="panos">PAN-OS</option>
           </select>
         </div>
@@ -133,8 +134,15 @@
           <input id="file" type="file" />
         </div>
         <div>
+          <label for="zone_map">Zone map</label>
+          <input id="zone_map" type="text" placeholder="wan1=untrust,internal=trust" style="width:100%;font:inherit;color:var(--ink);background:#0a1220;border:1px solid var(--line);padding:10px 12px;" />
+        </div>
+        <div>
           <label>&nbsp;</label>
-          <button id="go">Convert</button>
+          <label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;color:var(--ink);">
+            <input id="dedup" type="checkbox" /> Dedup objects
+          </label>
+          <button id="go" style="margin-top:8px;">Convert</button>
         </div>
       </div>
     </section>
@@ -149,15 +157,16 @@
         <button data-tab="set">Set commands</button>
         <button data-tab="validation">Validation</button>
         <button data-tab="analysis">Analysis</button>
+        <button data-tab="report">Report</button>
         <button data-tab="ir">IR JSON</button>
       </div>
       <pre id="out"></pre>
     </section>
 
-    <p class="foot">CLI: <code>interstellar convert file.conf -o out.xml</code> · API: <code>/api/health</code></p>
+    <p class="foot">CLI: <code>interstellar convert file.conf -o out.xml</code> · <code>batch</code> · <code>diff</code> · <code>project</code> · API: <code>/api/health</code></p>
   </main>
   <script>
-    const state = { xml: '', set: '', validation: '', analysis: '', ir: '' };
+    const state = { xml: '', set: '', validation: '', analysis: '', report: '', ir: '' };
     const out = document.getElementById('out');
     const go = document.getElementById('go');
 
@@ -178,6 +187,9 @@
         fd.append('file', file);
         fd.append('vendor', document.getElementById('vendor').value);
         fd.append('name', file.name);
+        const zm = document.getElementById('zone_map').value.trim();
+        if (zm) fd.append('zone_map', zm);
+        if (document.getElementById('dedup').checked) fd.append('dedup', 'true');
         const res = await fetch('/api/upload', { method: 'POST', body: fd });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || res.statusText);
@@ -199,6 +211,7 @@
         state.validation = (data.validation.issues || []).map(i =>
           `[${i.severity}] ${i.code}: ${i.message}`).join('\n') || 'No issues';
         state.analysis = JSON.stringify(data.analysis, null, 2);
+        state.report = data.report_markdown || '';
         state.ir = JSON.stringify(data.ir, null, 2);
         out.textContent = state.xml;
       } catch (e) {

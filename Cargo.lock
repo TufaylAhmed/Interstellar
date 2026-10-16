@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "interstellar-analyze"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "interstellar-ir",
  "serde",
@@ -459,7 +459,7 @@ dependencies = [
 
 [[package]]
 name = "interstellar-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "axum",
@@ -477,7 +477,7 @@ dependencies = [
 
 [[package]]
 name = "interstellar-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -494,7 +494,7 @@ dependencies = [
 
 [[package]]
 name = "interstellar-emit"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "interstellar-ir",
@@ -502,17 +502,18 @@ dependencies = [
 
 [[package]]
 name = "interstellar-ir"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "serde",
  "serde_json",
  "thiserror",
+ "uuid",
 ]
 
 [[package]]
 name = "interstellar-parse"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "interstellar-ir",
