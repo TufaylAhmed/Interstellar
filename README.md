@@ -22,7 +22,23 @@ Standalone Rust project — **not** part of PA-Converter / Expedition. No PHP.
 | Projects | Save/load under `~/.interstellar/projects` |
 | UI + API | `interstellar serve` on `127.0.0.1:8787` |
 
-## Build
+## Install (npm)
+
+```bash
+# public npm
+npm i -g @sequr3/interstellar
+
+# or one-shot
+npx @sequr3/interstellar --help
+
+# or from GitHub
+npx --yes github:TufaylAhmed/Interstellar --help
+```
+
+On macOS, `postinstall` downloads the matching binary from [GitHub Releases](https://github.com/TufaylAhmed/Interstellar/releases).  
+Windows/Linux prebuilds will be added to releases when available; until then build with Cargo (below).
+
+## Build (from source)
 
 ```bash
 cargo build --release

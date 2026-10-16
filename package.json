@@ -1,0 +1,46 @@
+{
+  "name": "@sequr3/interstellar",
+  "version": "0.2.0",
+  "description": "Interstellar — multi-vendor firewall config converter to PAN-OS (Rust binary via npm)",
+  "license": "UNLICENSED",
+  "author": "Tufail Ahmed Sheikh <https://github.com/TufaylAhmed>",
+  "bin": {
+    "interstellar": "bin/interstellar.js"
+  },
+  "files": [
+    "bin",
+    "scripts",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/install-binary.js",
+    "install-binary": "node scripts/install-binary.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TufaylAhmed/Interstellar.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TufaylAhmed/Interstellar/issues"
+  },
+  "homepage": "https://github.com/TufaylAhmed/Interstellar#readme",
+  "keywords": [
+    "interstellar",
+    "paloalto",
+    "pan-os",
+    "fortinet",
+    "cisco",
+    "checkpoint",
+    "juniper",
+    "firewall",
+    "converter"
+  ]
+}
