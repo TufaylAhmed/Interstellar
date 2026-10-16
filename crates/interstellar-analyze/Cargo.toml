@@ -1,0 +1,11 @@
+[package]
+name = "interstellar-analyze"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Interstellar policy analysis"
+
+[dependencies]
+interstellar-ir = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

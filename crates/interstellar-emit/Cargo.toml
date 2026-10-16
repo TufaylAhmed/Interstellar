@@ -1,0 +1,10 @@
+[package]
+name = "interstellar-emit"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Interstellar PAN-OS XML / set-command emitters"
+
+[dependencies]
+anyhow = { workspace = true }
+interstellar-ir = { workspace = true }

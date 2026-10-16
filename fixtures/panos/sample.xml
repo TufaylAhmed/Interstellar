@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<config version="11.1.0" urldb="paloaltonetworks">
+  <shared>
+    <address>
+      <entry name="web">
+        <ip-netmask>10.1.1.10/32</ip-netmask>
+      </entry>
+      <entry name="users">
+        <ip-netmask>10.0.0.0/24</ip-netmask>
+      </entry>
+    </address>
+    <address-group>
+      <entry name="internal">
+        <static>
+          <member>users</member>
+          <member>web</member>
+        </static>
+      </entry>
+    </address-group>
+    <service>
+      <entry name="tcp-8080">
+        <protocol>
+          <tcp>
+            <port>8080</port>
+          </tcp>
+        </protocol>
+      </entry>
+    </service>
+    <profile-group>
+      <entry name="default">
+        <virus><member>default</member></virus>
+        <vulnerability><member>default</member></vulnerability>
+      </entry>
+    </profile-group>
+  </shared>
+  <devices>
+    <entry name="localhost.localdomain">
+      <vsys>
+        <entry name="vsys1">
+          <rulebase>
+            <security>
+              <rules>
+                <entry name="allow-web">
+                  <from><member>trust</member></from>
+                  <to><member>untrust</member></to>
+                  <source><member>users</member></source>
+                  <destination><member>web</member></destination>
+                  <application><member>any</member></application>
+                  <service><member>tcp-8080</member></service>
+                  <action>allow</action>
+                  <log-end>yes</log-end>
+                </entry>
+              </rules>
+            </security>
+            <nat>
+              <rules>
+                <entry name="outbound-nat">
+                  <from><member>trust</member></from>
+                  <to><member>untrust</member></to>
+                  <source><member>users</member></source>
+                  <destination><member>any</member></destination>
+                  <service><member>any</member></service>
+                  <source-translation>
+                    <dynamic-ip-and-port>
+                      <translated-address>
+                        <member>web</member>
+                      </translated-address>
+                    </dynamic-ip-and-port>
+                  </source-translation>
+                </entry>
+              </rules>
+            </nat>
+          </rulebase>
+        </entry>
+      </vsys>
+      <network>
+        <ike>
+          <gateway>
+            <entry name="branch">
+              <peer-address><ip>198.51.100.1</ip></peer-address>
+            </entry>
+          </gateway>
+        </ike>
+        <tunnel>
+          <ipsec>
+            <entry name="branch-tunnel">
+              <auto-key>
+                <ike-gateway>
+                  <entry name="branch"/>
+                </ike-gateway>
+              </auto-key>
+            </entry>
+          </ipsec>
+        </tunnel>
+      </network>
+    </entry>
+  </devices>
+</config>

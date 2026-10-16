@@ -1,0 +1,17 @@
+[package]
+name = "interstellar-parse"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Interstellar vendor config parsers"
+
+[dependencies]
+anyhow = { workspace = true }
+interstellar-ir = { workspace = true }
+quick-xml = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = "1"

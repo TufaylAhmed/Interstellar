@@ -1,0 +1,35 @@
+{
+  "objects": [
+    { "type": "host", "name": "web", "ipv4-address": "10.1.1.10" },
+    { "type": "network", "name": "users", "subnet4": "10.0.0.0", "mask-length4": 24 },
+    { "type": "service-tcp", "name": "https", "port": "443" },
+    { "type": "group", "name": "web_grp", "members": [{ "name": "web" }] },
+    {
+      "type": "nat-rule",
+      "original-source": [{ "name": "users" }],
+      "original-destination": [{ "name": "Any" }],
+      "translated-source": [{ "name": "web" }],
+      "enabled": true
+    }
+  ],
+  "rulebase": [
+    {
+      "type": "access-rule",
+      "name": "allow-web",
+      "action": { "name": "Accept" },
+      "source": [{ "name": "users" }],
+      "destination": [{ "name": "web" }],
+      "service": [{ "name": "https" }],
+      "enabled": true
+    },
+    {
+      "type": "access-rule",
+      "name": "drop-all",
+      "action": { "name": "Drop" },
+      "source": [{ "name": "Any" }],
+      "destination": [{ "name": "Any" }],
+      "service": [{ "name": "Any" }],
+      "enabled": true
+    }
+  ]
+}

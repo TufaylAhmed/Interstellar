@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Interstellar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --void: #070b12;
+      --panel: rgba(12, 20, 32, 0.72);
+      --ink: #e7eef8;
+      --muted: #8b9bb0;
+      --accent: #6ec8ff;
+      --accent-2: #c9f07a;
+      --warn: #f0b429;
+      --err: #ff7b7b;
+      --line: rgba(231, 238, 248, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "JetBrains Mono", ui-monospace, monospace;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 480px at 8% -8%, rgba(110, 200, 255, 0.16), transparent 55%),
+        radial-gradient(700px 420px at 92% 8%, rgba(201, 240, 122, 0.10), transparent 50%),
+        linear-gradient(165deg, #05080e 0%, #0c1522 48%, #081018 100%);
+    }
+    main { max-width: 1080px; margin: 0 auto; padding: 56px 24px 88px; }
+    .brand {
+      font-family: "Instrument Sans", sans-serif;
+      font-weight: 700;
+      font-size: clamp(2.8rem, 7vw, 4.2rem);
+      letter-spacing: -0.04em;
+      margin: 0 0 10px;
+      line-height: 0.95;
+    }
+    .brand span { color: var(--accent); }
+    .lede {
+      color: var(--muted);
+      max-width: 52ch;
+      line-height: 1.55;
+      margin: 0 0 36px;
+      font-size: 14px;
+    }
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    select, button, input[type="file"] {
+      font: inherit;
+      color: var(--ink);
+      background: #0a1220;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      width: 100%;
+    }
+    button#go {
+      background: linear-gradient(90deg, var(--accent), #8ad0ff);
+      color: #061018;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+    .row > * { flex: 1; min-width: 180px; }
+    pre {
+      margin: 0;
+      max-height: 380px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.45;
+      color: #d7e3f2;
+    }
+    .tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+    .tabs button {
+      width: auto;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .tabs button.active { border-color: var(--accent); color: var(--accent); }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+    .stat { border: 1px solid var(--line); padding: 12px; }
+    .stat b { display: block; font-family: "Instrument Sans", sans-serif; font-size: 1.45rem; }
+    .stat span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+    .hidden { display: none; }
+    .foot { margin-top: 28px; color: var(--muted); font-size: 12px; }
+    .foot code { color: var(--accent-2); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="brand">Inter<span>stellar</span></h1>
+    <p class="lede">
+      Convert Fortinet, Cisco, Check Point, and PAN-OS configs into PAN-OS XML and set commands.
+      Local-only. No PHP. Separate from PA-Converter / Expedition.
+    </p>
+
+    <section class="panel">
+      <div class="row">
+        <div>
+          <label for="vendor">Vendor</label>
+          <select id="vendor">
+            <option value="auto">Auto-detect</option>
+            <option value="fortinet">Fortinet</option>
+            <option value="cisco">Cisco</option>
+            <option value="checkpoint">Check Point</option>
+            <option value="panos">PAN-OS</option>
+          </select>
+        </div>
+        <div>
+          <label for="file">Config file</label>
+          <input id="file" type="file" />
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button id="go">Convert</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary" class="panel hidden">
+      <div class="stats" id="stats"></div>
+    </section>
+
+    <section id="results" class="panel hidden">
+      <div class="tabs">
+        <button class="active" data-tab="xml">XML</button>
+        <button data-tab="set">Set commands</button>
+        <button data-tab="validation">Validation</button>
+        <button data-tab="analysis">Analysis</button>
+        <button data-tab="ir">IR JSON</button>
+      </div>
+      <pre id="out"></pre>
+    </section>
+
+    <p class="foot">CLI: <code>interstellar convert file.conf -o out.xml</code> · API: <code>/api/health</code></p>
+  </main>
+  <script>
+    const state = { xml: '', set: '', validation: '', analysis: '', ir: '' };
+    const out = document.getElementById('out');
+    const go = document.getElementById('go');
+
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        out.textContent = state[btn.dataset.tab] || '';
+      });
+    });
+
+    go.addEventListener('click', async () => {
+      const file = document.getElementById('file').files[0];
+      if (!file) { alert('Choose a config file'); return; }
+      go.disabled = true;
+      try {
+        const fd = new FormData();
+        fd.append('file', file);
+        fd.append('vendor', document.getElementById('vendor').value);
+        fd.append('name', file.name);
+        const res = await fetch('/api/upload', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || res.statusText);
+
+        const s = data.project.summary;
+        document.getElementById('summary').classList.remove('hidden');
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('stats').innerHTML = [
+          ['Vendor', s.vendor],
+          ['Addresses', s.addresses],
+          ['Addr groups', s.address_groups],
+          ['Services', s.services],
+          ['Rules', s.security_rules],
+          ['NAT', s.nat_rules],
+        ].map(([k,v]) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+
+        state.xml = data.xml;
+        state.set = data.set_commands;
+        state.validation = (data.validation.issues || []).map(i =>
+          `[${i.severity}] ${i.code}: ${i.message}`).join('\n') || 'No issues';
+        state.analysis = JSON.stringify(data.analysis, null, 2);
+        state.ir = JSON.stringify(data.ir, null, 2);
+        out.textContent = state.xml;
+      } catch (e) {
+        alert(e.message || e);
+      } finally {
+        go.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
