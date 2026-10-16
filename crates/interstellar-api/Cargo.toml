@@ -8,6 +8,7 @@ description = "Interstellar local HTTP API"
 [dependencies]
 anyhow = { workspace = true }
 axum = { workspace = true }
+chrono = { workspace = true }
 interstellar-analyze = { workspace = true }
 interstellar-emit = { workspace = true }
 interstellar-ir = { workspace = true }

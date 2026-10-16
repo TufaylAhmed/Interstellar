@@ -20,7 +20,7 @@ Standalone Rust project — **not** part of PA-Converter / Expedition. No PHP.
 | Diff | `interstellar diff a.conf b.conf` |
 | Analyze | JSON / Markdown / HTML reports |
 | Projects | Save/load under `~/.interstellar/projects` |
-| UI + API | `interstellar serve` on `127.0.0.1:8787` |
+| UI + API | Workspace: create projects, import/merge configs, edit, export |
 
 ## Install (npm)
 

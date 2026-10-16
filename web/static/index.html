@@ -7,219 +7,162 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --void: #070b12;
-      --panel: rgba(12, 20, 32, 0.72);
-      --ink: #e7eef8;
-      --muted: #8b9bb0;
-      --accent: #6ec8ff;
-      --accent-2: #c9f07a;
-      --warn: #f0b429;
-      --err: #ff7b7b;
-      --line: rgba(231, 238, 248, 0.12);
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: "JetBrains Mono", ui-monospace, monospace;
-      color: var(--ink);
-      background:
-        radial-gradient(900px 480px at 8% -8%, rgba(110, 200, 255, 0.16), transparent 55%),
-        radial-gradient(700px 420px at 92% 8%, rgba(201, 240, 122, 0.10), transparent 50%),
-        linear-gradient(165deg, #05080e 0%, #0c1522 48%, #081018 100%);
-    }
-    main { max-width: 1080px; margin: 0 auto; padding: 56px 24px 88px; }
-    .brand {
-      font-family: "Instrument Sans", sans-serif;
-      font-weight: 700;
-      font-size: clamp(2.8rem, 7vw, 4.2rem);
-      letter-spacing: -0.04em;
-      margin: 0 0 10px;
-      line-height: 0.95;
-    }
-    .brand span { color: var(--accent); }
-    .lede {
-      color: var(--muted);
-      max-width: 52ch;
-      line-height: 1.55;
-      margin: 0 0 36px;
-      font-size: 14px;
-    }
-    .panel {
-      border: 1px solid var(--line);
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-      padding: 22px;
-      margin-bottom: 18px;
-    }
-    label {
-      display: block;
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    select, button, input[type="file"] {
-      font: inherit;
-      color: var(--ink);
-      background: #0a1220;
-      border: 1px solid var(--line);
-      padding: 10px 12px;
-      width: 100%;
-    }
-    button#go {
-      background: linear-gradient(90deg, var(--accent), #8ad0ff);
-      color: #061018;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    button:disabled { opacity: 0.5; cursor: wait; }
-    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-    .row > * { flex: 1; min-width: 180px; }
-    pre {
-      margin: 0;
-      max-height: 380px;
-      overflow: auto;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 12px;
-      line-height: 1.45;
-      color: #d7e3f2;
-    }
-    .tabs { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
-    .tabs button {
-      width: auto;
-      background: transparent;
-      color: var(--ink);
-      border: 1px solid var(--line);
-      cursor: pointer;
-    }
-    .tabs button.active { border-color: var(--accent); color: var(--accent); }
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
-    .stat { border: 1px solid var(--line); padding: 12px; }
-    .stat b { display: block; font-family: "Instrument Sans", sans-serif; font-size: 1.45rem; }
-    .stat span { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
-    .hidden { display: none; }
-    .foot { margin-top: 28px; color: var(--muted); font-size: 12px; }
-    .foot code { color: var(--accent-2); }
-  </style>
+  <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
-  <main>
-    <h1 class="brand">Inter<span>stellar</span></h1>
-    <p class="lede">
-      Convert Fortinet, Cisco, Check Point, Juniper SRX, and PAN-OS configs into PAN-OS XML and set commands.
-      Local-only. No PHP. Separate from PA-Converter / Expedition.
-    </p>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">Inter<span>stellar</span></div>
+      <p class="side-lede">Projects · import · merge · edit · export</p>
 
-    <section class="panel">
-      <div class="row">
-        <div>
-          <label for="vendor">Vendor</label>
-          <select id="vendor">
-            <option value="auto">Auto-detect</option>
-            <option value="fortinet">Fortinet</option>
-            <option value="cisco">Cisco</option>
-            <option value="checkpoint">Check Point</option>
-            <option value="juniper">Juniper SRX</option>
-            <option value="panos">PAN-OS</option>
-          </select>
-        </div>
-        <div>
-          <label for="file">Config file</label>
-          <input id="file" type="file" />
-        </div>
-        <div>
-          <label for="zone_map">Zone map</label>
-          <input id="zone_map" type="text" placeholder="wan1=untrust,internal=trust" style="width:100%;font:inherit;color:var(--ink);background:#0a1220;border:1px solid var(--line);padding:10px 12px;" />
-        </div>
-        <div>
-          <label>&nbsp;</label>
-          <label style="display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;color:var(--ink);">
-            <input id="dedup" type="checkbox" /> Dedup objects
-          </label>
-          <button id="go" style="margin-top:8px;">Convert</button>
-        </div>
+      <div class="side-actions">
+        <input id="new-project-name" type="text" placeholder="New project name" />
+        <button id="btn-create" class="primary">Create project</button>
       </div>
-    </section>
 
-    <section id="summary" class="panel hidden">
-      <div class="stats" id="stats"></div>
-    </section>
+      <div class="side-label">Projects</div>
+      <ul id="project-list" class="project-list"></ul>
+    </aside>
 
-    <section id="results" class="panel hidden">
-      <div class="tabs">
-        <button class="active" data-tab="xml">XML</button>
-        <button data-tab="set">Set commands</button>
-        <button data-tab="validation">Validation</button>
-        <button data-tab="analysis">Analysis</button>
-        <button data-tab="report">Report</button>
-        <button data-tab="ir">IR JSON</button>
-      </div>
-      <pre id="out"></pre>
-    </section>
+    <main class="main">
+      <section id="empty-state" class="empty">
+        <h1>Workspace</h1>
+        <p>Create a project, import Fortinet / Cisco / Check Point / Juniper / PAN-OS configs, merge them, edit objects and rules, then export PAN-OS XML.</p>
+      </section>
 
-    <p class="foot">CLI: <code>interstellar convert file.conf -o out.xml</code> · <code>batch</code> · <code>diff</code> · <code>project</code> · API: <code>/api/health</code></p>
-  </main>
-  <script>
-    const state = { xml: '', set: '', validation: '', analysis: '', report: '', ir: '' };
-    const out = document.getElementById('out');
-    const go = document.getElementById('go');
+      <section id="workspace" class="hidden">
+        <header class="topbar">
+          <div>
+            <h1 id="project-title">Project</h1>
+            <div id="project-meta" class="meta"></div>
+          </div>
+          <div class="top-actions">
+            <button id="btn-save" class="primary">Save edits</button>
+            <button id="btn-dedup">Dedup</button>
+            <button id="btn-delete" class="danger">Delete</button>
+          </div>
+        </header>
 
-    document.querySelectorAll('.tabs button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        out.textContent = state[btn.dataset.tab] || '';
-      });
-    });
+        <div class="stats" id="stats"></div>
 
-    go.addEventListener('click', async () => {
-      const file = document.getElementById('file').files[0];
-      if (!file) { alert('Choose a config file'); return; }
-      go.disabled = true;
-      try {
-        const fd = new FormData();
-        fd.append('file', file);
-        fd.append('vendor', document.getElementById('vendor').value);
-        fd.append('name', file.name);
-        const zm = document.getElementById('zone_map').value.trim();
-        if (zm) fd.append('zone_map', zm);
-        if (document.getElementById('dedup').checked) fd.append('dedup', 'true');
-        const res = await fetch('/api/upload', { method: 'POST', body: fd });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || res.statusText);
+        <div class="tabs" id="tabs">
+          <button data-tab="sources" class="active">Sources</button>
+          <button data-tab="addresses">Addresses</button>
+          <button data-tab="services">Services</button>
+          <button data-tab="rules">Security rules</button>
+          <button data-tab="nat">NAT</button>
+          <button data-tab="export">Export</button>
+        </div>
 
-        const s = data.project.summary;
-        document.getElementById('summary').classList.remove('hidden');
-        document.getElementById('results').classList.remove('hidden');
-        document.getElementById('stats').innerHTML = [
-          ['Vendor', s.vendor],
-          ['Addresses', s.addresses],
-          ['Addr groups', s.address_groups],
-          ['Services', s.services],
-          ['Rules', s.security_rules],
-          ['NAT', s.nat_rules],
-        ].map(([k,v]) => `<div class="stat"><b>${v}</b><span>${k}</span></div>`).join('');
+        <div id="tab-sources" class="tab-panel">
+          <div class="panel import-panel">
+            <h2>Import & merge config</h2>
+            <div class="row">
+              <div>
+                <label>Vendor</label>
+                <select id="import-vendor">
+                  <option value="auto">Auto-detect</option>
+                  <option value="fortinet">Fortinet</option>
+                  <option value="cisco">Cisco</option>
+                  <option value="checkpoint">Check Point</option>
+                  <option value="juniper">Juniper SRX</option>
+                  <option value="panos">PAN-OS</option>
+                </select>
+              </div>
+              <div>
+                <label>Zone map</label>
+                <input id="import-zone-map" type="text" placeholder="wan1=untrust,internal=trust" />
+              </div>
+              <div>
+                <label>File</label>
+                <input id="import-file" type="file" />
+              </div>
+              <div class="end">
+                <label class="check"><input id="import-dedup" type="checkbox" /> Dedup after merge</label>
+                <button id="btn-import" class="primary">Import into project</button>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Imported sources</h2>
+            <table>
+              <thead><tr><th>File</th><th>Vendor</th><th>Imported</th><th>Rules</th><th>Addresses</th></tr></thead>
+              <tbody id="sources-body"></tbody>
+            </table>
+          </div>
+        </div>
 
-        state.xml = data.xml;
-        state.set = data.set_commands;
-        state.validation = (data.validation.issues || []).map(i =>
-          `[${i.severity}] ${i.code}: ${i.message}`).join('\n') || 'No issues';
-        state.analysis = JSON.stringify(data.analysis, null, 2);
-        state.report = data.report_markdown || '';
-        state.ir = JSON.stringify(data.ir, null, 2);
-        out.textContent = state.xml;
-      } catch (e) {
-        alert(e.message || e);
-      } finally {
-        go.disabled = false;
-      }
-    });
-  </script>
+        <div id="tab-addresses" class="tab-panel hidden">
+          <div class="panel toolbar">
+            <button id="btn-add-address">Add address</button>
+          </div>
+          <div class="panel">
+            <table>
+              <thead><tr><th>Name</th><th>Kind</th><th>Value</th><th></th></tr></thead>
+              <tbody id="addresses-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-services" class="tab-panel hidden">
+          <div class="panel toolbar">
+            <button id="btn-add-service">Add service</button>
+          </div>
+          <div class="panel">
+            <table>
+              <thead><tr><th>Name</th><th>Kind</th><th>Value</th><th></th></tr></thead>
+              <tbody id="services-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-rules" class="tab-panel hidden">
+          <div class="panel toolbar">
+            <button id="btn-add-rule">Add rule</button>
+          </div>
+          <div class="panel table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>From</th><th>To</th><th>Source</th><th>Destination</th>
+                  <th>Service</th><th>Action</th><th>Disabled</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="rules-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-nat" class="tab-panel hidden">
+          <div class="panel">
+            <table>
+              <thead>
+                <tr><th>Name</th><th>Type</th><th>From</th><th>To</th><th>Source</th><th>Destination</th><th>Translated</th></tr>
+              </thead>
+              <tbody id="nat-body"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-export" class="tab-panel hidden">
+          <div class="panel export-actions">
+            <a id="dl-xml" class="btn-link primary" href="#">Download XML</a>
+            <a id="dl-set" class="btn-link" href="#">Download set commands</a>
+            <a id="dl-ir" class="btn-link" href="#">Download IR JSON</a>
+          </div>
+          <div class="panel">
+            <h2>Validation</h2>
+            <pre id="validation-out"></pre>
+          </div>
+          <div class="panel">
+            <h2>Analysis</h2>
+            <pre id="analysis-out"></pre>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
 </body>
 </html>

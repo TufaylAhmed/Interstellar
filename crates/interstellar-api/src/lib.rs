@@ -1,9 +1,11 @@
 //! Local HTTP API + static UI for Interstellar.
 
+mod workspace;
+
 use axum::extract::{Multipart, Path, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
-use axum::routing::{delete, get, post};
+use axum::routing::{delete, get, post, put};
 use axum::{Json, Router};
 use interstellar_analyze::{analyze, diff_documents, report_html, report_markdown, AnalysisReport};
 use interstellar_emit::{
@@ -115,6 +117,42 @@ pub async fn serve(
         .route("/api/disk/projects", post(disk_save_from_memory))
         .route("/api/disk/projects/{id}", get(disk_show))
         .route("/api/disk/projects/{id}", delete(disk_delete))
+        // Expedition-style workspace (disk-backed)
+        .route("/api/workspace/projects", get(workspace::ws_list).post(workspace::ws_create))
+        .route(
+            "/api/workspace/projects/{id}",
+            get(workspace::ws_get)
+                .delete(workspace::ws_delete)
+                .patch(workspace::ws_rename),
+        )
+        .route(
+            "/api/workspace/projects/{id}/document",
+            put(workspace::ws_save_document),
+        )
+        .route(
+            "/api/workspace/projects/{id}/import",
+            post(workspace::ws_import_multipart),
+        )
+        .route(
+            "/api/workspace/projects/{id}/import-json",
+            post(workspace::ws_import_json),
+        )
+        .route(
+            "/api/workspace/projects/{id}/dedup",
+            post(workspace::ws_dedup),
+        )
+        .route(
+            "/api/workspace/projects/{id}/export/xml",
+            get(workspace::ws_export_xml),
+        )
+        .route(
+            "/api/workspace/projects/{id}/export/set",
+            get(workspace::ws_export_set),
+        )
+        .route(
+            "/api/workspace/projects/{id}/export/ir",
+            get(workspace::ws_export_ir),
+        )
         .fallback_service(ServeDir::new(static_dir).append_index_html_on_directories(true))
         .layer(CorsLayer::permissive())
         .with_state(state);
@@ -486,13 +524,13 @@ pub struct ApiError {
 }
 
 impl ApiError {
-    fn bad(msg: impl Into<String>) -> Self {
+    pub(crate) fn bad(msg: impl Into<String>) -> Self {
         Self {
             status: StatusCode::BAD_REQUEST,
             message: msg.into(),
         }
     }
-    fn not_found(msg: impl Into<String>) -> Self {
+    pub(crate) fn not_found(msg: impl Into<String>) -> Self {
         Self {
             status: StatusCode::NOT_FOUND,
             message: msg.into(),
