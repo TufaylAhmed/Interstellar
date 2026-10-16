@@ -71,8 +71,9 @@ interstellar project list
 interstellar project save fixtures/panos/sample.xml --name pan-lab
 interstellar project export <id> -o /tmp/exported.xml
 
-# UI
+# UI (opens browser automatically)
 interstellar serve
+interstellar serve --no-open          # listen only
 ```
 
 ## API

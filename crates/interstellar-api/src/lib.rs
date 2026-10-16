@@ -84,6 +84,7 @@ pub async fn serve(
     addr: SocketAddr,
     static_dir: PathBuf,
     projects_dir: PathBuf,
+    open_browser: bool,
 ) -> anyhow::Result<()> {
     std::fs::create_dir_all(&projects_dir)?;
     let state = AppState {
@@ -118,10 +119,67 @@ pub async fn serve(
         .layer(CorsLayer::permissive())
         .with_state(state);
 
-    tracing::info!("interstellar UI/API listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await?;
+    let bound = listener.local_addr().unwrap_or(addr);
+    let url = browser_url(bound);
+    tracing::info!("interstellar UI/API listening on {url}");
+
+    if open_browser {
+        match open_in_browser(&url) {
+            Ok(()) => tracing::info!("opened browser at {url}"),
+            Err(e) => tracing::warn!("could not open browser automatically: {e} (open {url} manually)"),
+        }
+    } else {
+        tracing::info!("open {url} in your browser (--no-open was set)");
+    }
+
     axum::serve(listener, app).await?;
     Ok(())
+}
+
+/// Prefer localhost in the browser when bound to unspecified (0.0.0.0 / ::).
+fn browser_url(addr: SocketAddr) -> String {
+    let host = match addr.ip() {
+        std::net::IpAddr::V4(v4) if v4.is_unspecified() => "127.0.0.1".to_string(),
+        std::net::IpAddr::V6(v6) if v6.is_unspecified() => "127.0.0.1".to_string(),
+        ip => ip.to_string(),
+    };
+    format!("http://{host}:{}", addr.port())
+}
+
+fn open_in_browser(url: &str) -> std::io::Result<()> {
+    use std::process::Command;
+
+    #[cfg(target_os = "macos")]
+    {
+        Command::new("open").arg(url).spawn()?.wait()?;
+        return Ok(());
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        // `start` is a cmd builtin; empty title arg avoids swallowing the URL.
+        Command::new("cmd")
+            .args(["/C", "start", "", url])
+            .spawn()?
+            .wait()?;
+        return Ok(());
+    }
+
+    #[cfg(all(unix, not(target_os = "macos")))]
+    {
+        Command::new("xdg-open").arg(url).spawn()?.wait()?;
+        return Ok(());
+    }
+
+    #[cfg(not(any(target_os = "macos", target_os = "windows", unix)))]
+    {
+        let _ = url;
+        Err(std::io::Error::new(
+            std::io::ErrorKind::Unsupported,
+            "no browser open command for this OS",
+        ))
+    }
 }
 
 async fn convert_handler(

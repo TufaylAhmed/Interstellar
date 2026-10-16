@@ -115,7 +115,7 @@ enum Commands {
         #[command(subcommand)]
         cmd: ProjectCmd,
     },
-    /// Start local UI + HTTP API
+    /// Start local UI + HTTP API (opens browser by default)
     Serve {
         #[arg(long, default_value = "127.0.0.1:8787")]
         bind: String,
@@ -123,6 +123,9 @@ enum Commands {
         static_dir: Option<PathBuf>,
         #[arg(long)]
         projects_dir: Option<PathBuf>,
+        /// Do not open the default browser
+        #[arg(long, default_value_t = false)]
+        no_open: bool,
     },
     /// Show parsed summary counts
     Summary {
@@ -277,11 +280,12 @@ async fn main() -> Result<()> {
             bind,
             static_dir,
             projects_dir,
+            no_open,
         } => {
             let addr: SocketAddr = bind.parse().context("invalid --bind address")?;
             let static_dir = resolve_static_dir(static_dir)?;
             let projects_dir = projects_dir.unwrap_or_else(default_projects_dir);
-            interstellar_api::serve(addr, static_dir, projects_dir).await?;
+            interstellar_api::serve(addr, static_dir, projects_dir, !no_open).await?;
         }
         Commands::Summary { input, vendor } => {
             let doc = load_doc(&input, &vendor)?;
