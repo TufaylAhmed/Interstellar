@@ -1,7 +1,7 @@
 {
-  "name": "@sequr3/interstellar",
+  "name": "@tufaylahmed/interstellar",
   "version": "0.2.0",
-  "description": "Interstellar — multi-vendor firewall config converter to PAN-OS (Rust binary via npm)",
+  "description": "Interstellar \u2014 multi-vendor firewall config converter to PAN-OS (Rust binary via npm)",
   "license": "UNLICENSED",
   "author": "Tufail Ahmed Sheikh <https://github.com/TufaylAhmed>",
   "bin": {

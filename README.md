@@ -25,13 +25,14 @@ Standalone Rust project — **not** part of PA-Converter / Expedition. No PHP.
 ## Install (npm)
 
 ```bash
-# public npm
-npm i -g @sequr3/interstellar
+# npmjs (public) — after publish
+npm i -g @tufaylahmed/interstellar
+npx @tufaylahmed/interstellar --help
 
-# or one-shot
-npx @sequr3/interstellar --help
+# GitHub Packages (already published for @tufaylahmed)
+npm i -g @tufaylahmed/interstellar --registry=https://npm.pkg.github.com
 
-# or from GitHub
+# or straight from the GitHub repo
 npx --yes github:TufaylAhmed/Interstellar --help
 ```
 

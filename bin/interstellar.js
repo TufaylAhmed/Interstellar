@@ -50,7 +50,7 @@ if (!bin) {
 Tried: ${vendorBin}
 
 Fix:
-  1) Re-run: npm explore @sequr3/interstellar -- npm run install-binary
+  1) Re-run: npm explore @tufaylahmed/interstellar -- npm run install-binary
   2) Or download a release: https://github.com/TufaylAhmed/Interstellar/releases
   3) Or build: cargo build --release  (then set INTERSTELLAR_BIN)
 

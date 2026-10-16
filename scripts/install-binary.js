@@ -19,11 +19,11 @@ const VERSION = process.env.INTERSTELLAR_VERSION || PKG.version;
 const REPO = 'TufaylAhmed/Interstellar';
 
 function log(msg) {
-  console.log(`@sequr3/interstellar: ${msg}`);
+  console.log(`@tufaylahmed/interstellar: ${msg}`);
 }
 
 function warn(msg) {
-  console.warn(`@sequr3/interstellar: ${msg}`);
+  console.warn(`@tufaylahmed/interstellar: ${msg}`);
 }
 
 function get(url, redirects = 0) {
